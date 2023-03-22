@@ -1,16 +1,16 @@
 # Domino Model Monitoring Demo
 There are two types of model monitoring workflows available in Domino. 
 
-## Model API Monitoring
-When a model is deployed on Domino as a Model API, Domino:
+- ## Model API Monitoring
+When a model is deployed on Domino as a Model API, 
 
-Analyzes the training data to extract the model schema (if you register a Domino TrainingSet).
+- Domino Analyzes the training data to extract the model schema (if you register a Domino TrainingSet).
 
-Captures predictions as Domino datasets for monitoring.
+- Captures predictions as Domino datasets for monitoring.
 
-Generates drift detection and model quality analysis on a schedule (if you share the ground truth dataset with Domino), and alerts you if any thresholds are exceeded.
+- Generates drift detection and model quality analysis on a schedule (if you share the ground truth dataset with Domino), and alerts you if any thresholds are exceeded.
 
-Allows you to easily reproduce the environment with access to the captured predictions to diagnose and fix issues with your model.
+- Allows you to easily reproduce the environment with access to the captured predictions to diagnose and fix issues with your model.
 
 See Set up monitoring for Model APIs in the Docs, https://docs.dominodatalab.com/en/latest/user_guide/2a7c3b/set-up-monitoring-for-model-apis/
 
@@ -19,16 +19,16 @@ If you do not want Domino to manage the prediction data collection, use the Mode
 
 
 
-## Model Monitor
+- ## Model Monitor
 For models deployed as other assets on Domino (App, Launcher, or Job) or external to Domino, you can use Domino to:
 
-Connect to the data source where the training, prediction, and ground truth data reside.
+- Connect to the data source where the training, prediction, and ground truth data reside.
 
-Register a model’s entry along with its schema.
+- Register a model’s entry along with its schema.
 
-Set up drift detection and model quality monitoring by registering the location of every new batch of prediction or ground truth data.
+- Set up drift detection and model quality monitoring by registering the location of every new batch of prediction or ground truth data.
 
-Set up a schedule for Domino to run drift and model quality checks periodically and alert you if thresholds are exceeded.
+- Set up a schedule for Domino to run drift and model quality checks periodically and alert you if thresholds are exceeded.
 
 See Set up Model Monitor in the docs, https://docs.dominodatalab.com/en/latest/user_guide/679cc1/set-up-model-monitor/
 
@@ -133,7 +133,7 @@ Enter the details for AWS S3 bucket containing the data files.
 Add ground truth tracking to the model’s monitoring to determine model quality and accuracy metrics
 From the Monitoring tab, open ‘Configure Monitoring’ > ‘Data’ and follow the instructions to register ground truth data
 Upon being taken to a new page to register ground truth data, upload the config that points to the data
-
+```
 {
     "variables": [
         {
@@ -154,7 +154,7 @@ Upon being taken to a new page to register ground truth data, upload the config 
         "datasourceType": "s3"
     }
 }
-
+```
 
 
 
