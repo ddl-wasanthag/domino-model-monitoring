@@ -1,4 +1,6 @@
 # Domino Model Monitoring Demo
+This workshop is designed to introduce Domino model monitoring workflows. It is designed to be self-guided and all necessary code and data are included. 
+
 There are two types of model monitoring workflows available in Domino. 
 
 - ## Model API Monitoring
@@ -48,15 +50,22 @@ In this section, we will
 - Configure ground truth data
 
 ### Publish Model API
-This section set up the Model API script to store the prediction data it generates 
-Review the model_api.py file and change the parameters to the ‘capturePrediction’ call, or make changes based on the examples here if desired.
+This section set up the Model API use in the future sections that generate and store the prediction data.
 
-Publish the Model API (make sure the correct project is selected)
+**Step1:**
 
-File name: model_API.py 
-Function to invoke: predict_price
+Review the model_api.py file and change the parameters to the ‘capturePrediction’ call, or make changes if desired.
 
+**Step2:**
 
+Publish the Model API with the following:
+
+**File name:** model_API.py 
+
+**Function to invoke:** 
+predict_price
+
+Add the following example JSON body into the model description., so it is easy to copy and paste into the model API tester to generate sample predictions.
 
 ```
 {
@@ -159,4 +168,8 @@ Upon being taken to a new page to register ground truth data, upload the config 
 
 
 ## Monitoring non Model APIs
-
+In this section, we will 
+- upload a training set
+- upload prediction data set
+- upload ground truth data
+- Examine Data drift and model quality
