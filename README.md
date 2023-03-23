@@ -106,7 +106,7 @@ Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly pu
 
 Update iterations if you need to Run all cells (note that nothing will be displayed)
 
-#### Configure Data Drift Monitoring
+### Configure Data Drift Monitoring
 For the Model API, enable monitoring by selecting the training set to track drift against.
 
 Go to your newly published Model API overview page and navigate to the ‘Monitoring’ tab.
