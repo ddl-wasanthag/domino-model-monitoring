@@ -41,20 +41,43 @@ See Set up Model Monitor in the docs, https://docs.dominodatalab.com/en/latest/u
 
 ## Monitoring Model APIs
 In this section, we will 
+- Create a training set and a sample model
 - publish a model API
-- Create a training set
 - Create data capture client to capture prediction data
 - Generate Predictions
 - Examine Predictions
 - Create a DMM data source
 - Configure ground truth data
 
+
+### Create a Training Set and a sample model
+In this section, you are going to create a training set that can be compared to later prediction data to monitor data drift. To read more about creating a training set see this, 
+https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/We will also create an example model that we can use in the later sections.
+
+**Step1:**
+
+Create a workspace with Jupyter Lab IDE in the project and open the 1-House_Price_Prediction.ipynb. We are going to use the kc_house_data.csv in the sample-data folder to create the training set. Note you can use a dataset from a Domino Data Source if you wish. Just read the data from the data source into the dataset_raw.
+
+**Step2:**
+
+In the cell that contains a call to `Code demonstrating creation of a training set`, update the ‘training_set_name’ to a unique name of your choice and Run all cells. This will create a training set that can be associated with the current model version.
+
+**Step3:**
+
+Execute the cell that contains `Example code to read the training set just created`. This will display the training set.
+
+**Step4:**
+
+Follow the rest of the cells to create a training and test set from the training set created above. The rest of the cells will train the model and create a serialized model `price_dt_py.sav`.
+At the end of this section, you have a Domino training set and a trained model.
+
+
 ### Publish Model API
 This section set up the Model API use in the future sections that generate and store the prediction data.
 
 **Step1:**
 
-Review the model_api.py file and change the parameters to the ‘capturePrediction’ call, or make changes if desired.
+Review the model_api.py file and change the parameters to the `capturePrediction` call, or make changes if desired.
 
 **Step2:**
 
@@ -92,16 +115,6 @@ Add the following example JSON body into the model description., so it is easy t
 }
 ```
 
-### Create a training set
-In this section create a training set that can be compared to later prediction data to monitor data drift. To read more about this see this, 
-https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/
-
-Create a workspce in the project and open the 1-House_Price_Prediction.ipynb
-
-In the cell that contains a call to ‘create_training_set_version’,
-Update the ‘training_set_name’ to a unique name of your choice and Run all cells.
-
-This will create a training set that can be associated with the current model version.
 
 ### Create Data capture client to capture prediction data
 Open 2-Prediction_Test.ipynb, and run all cells to test the functionality of the instrumentation
