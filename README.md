@@ -52,7 +52,9 @@ In this section, we will
 
 ### Create a Training Set and a sample model
 In this section, you are going to create a training set that can be compared to later prediction data to monitor data drift. To read more about creating a training set see this, 
-https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/We will also create an example model that we can use in the later sections.
+https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/
+
+We will also create an example model that we can use in the later sections.
 
 **Step1:**
 
@@ -60,7 +62,7 @@ Create a workspace with Jupyter Lab IDE in the project and open the 1-House_Pric
 
 **Step2:**
 
-In the cell that contains a call to `Code demonstrating creation of a training set`, update the ‘training_set_name’ to a unique name of your choice and Run all cells. This will create a training set that can be associated with the current model version.
+In the cell that contains a call to `Code demonstrating creation of a training set`, update the ‘training_set_name’ to a unique name of your choice and Run all cells. This will create a training set that can be associated with a model in this project.
 
 **Step3:**
 
@@ -115,18 +117,36 @@ Add the following example JSON body into the model description., so it is easy t
 }
 ```
 
+**Step3:**
 
-### Create Data capture client to capture prediction data
-Open 2-Prediction_Test.ipynb, and run all cells to test the functionality of the instrumentation
+Test the model using the model API tester and curl.
+
+### Capture prediction data
+Prediction data is a combination of the inputs to the model and the predictions that are output from the model. Inputs are the values of the features that were input as API requests into the Model API. When you incorporate a Domino-provided data capture library in your Model API code, Domino automatically captures the prediction data.
+
+The data ingestion client is part of the Domino Standard Environment (DSE) with the latest version of the client library. The client library records prediction data for deployed models.
+
+You can read more on Domino data capture client here, https://docs.dominodatalab.com/en/latest/user_guide/93e5c0/set-up-prediction-capture/
+
+
+**Step1:**
+
+Open 2-Prediction_Test.ipynb, and run all cells to test the functionality of the prediction function and prediction capture.
 
 ### Generate Predictions
-Use a data-generation program to populate predictions so that we can see how the model monitor is performing.
+In this section we will use a data-generation program to populate predictions so that we can see how the model monitor is performing.
 
-Open 3-model_api_caller.ipynb. 
+**Step1:**
 
-Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
+Open 3-model_api_caller.ipynb. Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
 
-Update iterations if you need to Run all cells (note that nothing will be displayed)
+**Step2:**
+
+Update iterations to specify the number of predictions yoy want to generate. Run all cells (note that nothing will be displayed).
+
+This will create a prediction_data folder inside the project dataset and will store the prediction data.
+
+(NOTE: this may take up to 10 minutes to populate the prediction data in the dataset)
 
 ### Configure Data Drift Monitoring
 For the Model API, enable monitoring by selecting the training set to track drift against.
@@ -137,7 +157,7 @@ Open ‘Configure Monitoring’ > ‘Data’ to select the right training set an
 
 Refresh and view drift and MQ metrics, set thresholds, etc.
 
-(NOTE: this may take up to 10 minutes to populate the prediction data in the dataset)
+
 
 ### Examine Predictions
 Now we’ll open a workspace directly from the published model and examine the predictions.
