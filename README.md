@@ -37,12 +37,13 @@ See Set up Model Monitor in the docs, https://docs.dominodatalab.com/en/latest/u
 ## Prerequisites
 - Access to a Domino deployment with a practitioner role.
 - Fork this repository to your own repository or use a zip file to upload the content into a Domino project. You can create a Git based project with a forked project or import it as a git repository.
-- Access to AWS S3 bucket to store the training, prediction, and ground truth data.
+- Access to AWS S3 bucket to store the training, prediction, and ground truth data. Copy the csv files inside the sample-data in to the S3 bucket.
 
 ## Monitoring Model APIs
 In this section, we will 
-- Create a training set and a sample model
+- Create a sample model
 - publish a model API
+- Create a training set
 - Create data capture client to capture prediction data
 - Generate Predictions
 - Examine Predictions
@@ -50,28 +51,21 @@ In this section, we will
 - Configure ground truth data
 
 
-### Create a Training Set and a sample model
-In this section, you are going to create a training set that can be compared to later prediction data to monitor data drift. To read more about creating a training set see this, 
-https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/
-
-We will also create an example model that we can use in the later sections.
+### Create a Sample model
+In this section, We will also create an example model that we can use in the later sections.
 
 **Step1:**
 
-Create a workspace with Jupyter Lab IDE in the project and open the 1-House_Price_Prediction.ipynb. We are going to use the kc_house_data.csv in the sample-data folder to create the training set. Note you can use a dataset from a Domino Data Source if you wish. Just read the data from the data source into the dataset_raw.
+Create a workspace with Jupyter Lab IDE in the project and open the 0-Create-and-Train-Model.ipynb. We are going to use the kc_house_data.csv in the sample-data folder to create the training set. Note you can use a dataset from a Domino Data Source if you wish. Just read the data from the data source into the dataset_raw.
 
 **Step2:**
 
-In the cell that contains a call to `Code demonstrating creation of a training set`, update the ‘training_set_name’ to a unique name of your choice and Run all cells. This will create a training set that can be associated with a model in this project.
+Execute the cells in order to:
+- Create training and test data sets for the model. 
+- Then train the Mdoel with DecisionTreeRegressor.
+- Create a serialized model `price_dt_py.sav`.
 
-**Step3:**
-
-Execute the cell that contains `Example code to read the training set just created`. This will display the training set.
-
-**Step4:**
-
-Follow the rest of the cells to create a training and test set from the training set created above. The rest of the cells will train the model and create a serialized model `price_dt_py.sav`.
-At the end of this section, you have a Domino training set and a trained model.
+At the end of this section, you will have a trained model.
 
 
 ### Publish Model API
@@ -121,6 +115,26 @@ Add the following example JSON body into the model description., so it is easy t
 
 Test the model using the model API tester and curl.
 
+At the end of this section, you will have a model API ready for generating predictions.
+
+### Create a Training Set
+In this section, you are going to create a training set that can be compared to later prediction data to monitor data drift. To read more about creating a training set see this, 
+https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/
+
+**Step1:**
+
+Open the 1-Create-Training-Set.ipynb notebook. 
+
+**Step2:**
+
+In the cell that contains a call to `Code demonstrating creation of a training set`, update the ‘training_set_name’ to a unique name of your choice and Run all cells. This will create a training set that can be associated with a model in this project.
+
+**Step3:**
+
+Execute the cell that contains `Example code to read the training set just created`. This will display the training set.
+
+At the end of this section, you will have a Domino training set ready to be associated with the model published in the previous section.
+
 ### Capture prediction data
 Prediction data is a combination of the inputs to the model and the predictions that are output from the model. Inputs are the values of the features that were input as API requests into the Model API. When you incorporate a Domino-provided data capture library in your Model API code, Domino automatically captures the prediction data.
 
@@ -131,14 +145,14 @@ You can read more on Domino data capture client here, https://docs.dominodatalab
 
 **Step1:**
 
-Open 2-Prediction_Test.ipynb, and run all cells to test the functionality of the prediction function and prediction capture.
+Open 2-test-Prediction.ipynb, and run all cells to test the functionality of the prediction function and prediction data capture. This will provide an example of the structure and format of the prediction data recorded by Domino when this model is deployed as a Domino Model API
 
 ### Generate Predictions
 In this section we will use a data-generation program to populate predictions so that we can see how the model monitor is performing.
 
 **Step1:**
 
-Open 3-model_api_caller.ipynb. Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
+Open 3-Generate-Predictions.ipynb. Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
 
 **Step2:**
 
@@ -162,7 +176,8 @@ Refresh and view drift and MQ metrics, set thresholds, etc.
 ### Examine Predictions
 Now we’ll open a workspace directly from the published model and examine the predictions.
 From your published model, click ‘Open in Workspace’ to spin up a new workspace
-Open the file AnalyzePredictions.ipynb
+Open the file 4-Analyze-Predictions.ipynb
+
 Update the path variable to point to the model version ID (a directory in the predictions Dataset) and execute the notebook to examine the recorded predictions
 
 
