@@ -1,6 +1,15 @@
-# Domino Model Monitoring Demo
-This workshop is designed to introduce Domino model monitoring workflows. It is designed to be self-guided and all necessary code and data are included. 
+# Domino Model Monitoring Worksuop
+This workshop is designed to introduce Domino model monitoring workflows. It is designed to be self-guided and all necessary code and data are included.
 
+## Datasets Used
+### KC House Data
+Online property companies offer valuations of houses using machine learning techniques. The aim of this report is to predict the house sales in King County, Washington State, USA using Multiple Linear Regression (MLR). The dataset consisted of historic data of houses sold between May 2014 to May 2015.
+
+https://www.kaggle.com/datasets/shivachandel/kc-house-data
+
+### Customer Churn Data
+
+## Domino Model Monitoring
 There are two types of model monitoring workflows available in Domino. 
 
 - ## Model API Monitoring
@@ -145,7 +154,7 @@ You can read more on Domino data capture client here, https://docs.dominodatalab
 
 **Step1:**
 
-Open 2-test-Prediction.ipynb, and run all cells to test the functionality of the prediction function and prediction data capture. This will provide an example of the structure and format of the prediction data recorded by Domino when this model is deployed as a Domino Model API
+Open 2-Test-Prediction.ipynb, and run all cells to test the functionality of the prediction function and prediction data capture. This will provide an example of the structure and format of the prediction data recorded by Domino when this model is deployed as a Domino Model API
 
 ### Generate Predictions
 In this section we will use a data-generation program to populate predictions so that we can see how the model monitor is performing.
@@ -160,7 +169,7 @@ Update iterations to specify the number of predictions yoy want to generate. Run
 
 This will create a prediction_data folder inside the project dataset and will store the prediction data.
 
-(NOTE: this may take up to 10 minutes to populate the prediction data in the dataset)
+(NOTE: this may take up to 30 minutes to populate the prediction data in the dataset)
 
 ### Configure Data Drift Monitoring
 For the Model API, enable monitoring by selecting the training set to track drift against.
@@ -178,8 +187,22 @@ Now we’ll open a workspace directly from the published model and examine the p
 From your published model, click ‘Open in Workspace’ to spin up a new workspace
 Open the file 4-Analyze-Predictions.ipynb
 
-Update the path variable to point to the model version ID (a directory in the predictions Dataset) and execute the notebook to examine the recorded predictions
+Update the path variable to point to the model version ID (a directory in the predictions Dataset) and execute the notebook to examine the recorded predictions.
 
+### Construct Ground Truth Data
+A sample ground truth data set can be constructed based on the above predictions stored in the Domino. 
+
+**Step1:**
+
+First download the predictions as a csv file. An example is included in the git repo, sample-data/model-api/preds_from_domino.csv.
+
+**Step2:**
+
+Update the predictions file to remove all columns except the event ID and then add a new column of price_pred. Update this new price_pred column to reflect the ground truth for the price. An example is included in the git repo, sample-data/model-api/gt_from_domino_preds.csv.
+
+**Step3:**
+
+Upload this ground truth data file in to the S3 bucket, so it can be access ffrom the monitoring data source for monitoring quality calculations.
 
 ### Create a DMM data source
 Navigate to the Model Monitor > Monitoring Data Source > Add Data source
@@ -201,10 +224,10 @@ Upon being taken to a new page to register ground truth data, upload the config 
         }
     ],
     "datasetDetails": {
-        "name": "gt_actual_pred.csv",
+        "name": "gt_from_domino_preds.csv",
         "datasetType": "file",
         "datasetConfig": {
-            "path": "gt_actual_pred.csv",
+            "path": "gt_from_domino_preds.csv",
             "fileFormat": "csv"
         },
         "datasourceName": "house_data_ziegler",
