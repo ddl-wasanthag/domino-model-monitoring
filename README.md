@@ -1,4 +1,4 @@
-# Domino Model Monitoring Worksuop
+# Domino Model Monitoring Workshop
 This workshop is designed to introduce Domino model monitoring workflows. It is designed to be self-guided and all necessary code and data are included.
 
 ## Datasets Used
@@ -239,8 +239,38 @@ Upon being taken to a new page to register ground truth data, upload the config 
 
 
 ## Monitoring non Model APIs
-In this section, we will 
-- upload a training set
-- upload prediction data set
-- upload ground truth data
-- Examine Data drift and model quality
+The Domino model monitoring does not require an actual model artifact to perform model monitoring. There are simply three datasets that are needed to set up monitoring.
+
+- Training Data - This is the data used to initially train your model. The schema of this data is the schema that future Prediction Data must match. The Training Data must contain a row_identifier column, at least one feature (aka input) column, and a prediction (aka a target or label) column. Note that only supervised (i.e. Classification or Regression) models trained on tabular data can be monitored in DMM today. 
+
+- Prediction Data - This is the new data that comes in that your model will make predictions on. It must contain the same feature columns and prediction column as defined in the schema of the Training Data.
+
+- Ground Truth Data - Ground Truth represents the ‘actuals’ that are assigned to a specific row. DMM computes model quality metrics by comparing the ground_truth value to the prediction value.  Ground Truth Data must also contain a row_identifier to match against prediction values.  
+
+An example of the above situation would be a model that predicts churn_y (customer churn) based on dropperc (percentage of calls dropped),mins (minutes on calls), consecmonths (consecutive months as a customer), income, and age. A few sample rows and the schema for the model in DMM would be as follows -
+
+| custid  | dropperc | mins | consecmonths | income | age | churn_Y | predictionProbability | y_gt |
+| ------------- | ------------- |------------- | ------------- |------------- | ------------- |------------- | ------------- | ------------- |
+| 844336  | 0.0163  | 550 | 28 | 89.2 | 45 | 1 | [0.6, 0.4] | 0 |
+| 146041  | 0.0183  | 545 | 33 | 54.2 | 43 | 0 | [0.15, 0.85] | 0 |
+
+custid - row_identifier (string)
+
+dropperc - feature (numeric)
+
+mins - feature (numeric)
+
+consecmonths - feature (numeric)
+
+income - feature (numeric)
+
+age - feature (numeric)
+
+churn_Y - prediction (categorical)
+
+predictionProbability - prediction_probability (numerical)
+
+y_gt - ground_truth (categorical)
+
+
+In the above use case - the columns [dropperc, mins, consecmonths, income, age] are used to predict churn_Y. y_gt represents the actual outcome of that particular customer - aka did they churn or did they not churn. churn_Y and y_gt are matched on custid to determine the performance of the model predictions. 
