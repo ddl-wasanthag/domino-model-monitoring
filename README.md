@@ -65,7 +65,7 @@ In this section, We will also create an example model that we can use in the lat
 
 **Step1:**
 
-Create a workspace with Jupyter Lab IDE in the project and open the 0-Create-and-Train-Model.ipynb. We are going to use the kc_house_data.csv in the sample-data folder to create the training set. Note you can use a dataset from a Domino Data Source if you wish. Just read the data from the data source into the dataset_raw.
+Create a workspace with Jupyter Lab IDE in the project and open the `0-Create-and-Train-Model.ipynb`. We are going to use the kc_house_data.csv in the sample-data folder to create the training set. Note you can use a dataset from a Domino Data Source if you wish. Just read the data from the data source into the dataset_raw.
 
 **Step2:**
 
@@ -82,16 +82,16 @@ This section set up the Model API use in the future sections that generate and s
 
 **Step1:**
 
-Review the model_api.py file and change the parameters to the `capturePrediction` call, or make changes if desired.
+Review the model_API.py file and change the parameters to the `capturePrediction` call, or make changes if desired.
 
 **Step2:**
 
 Publish the Model API with the following:
 
-**File name:** model_API.py 
+**File name:** `model_API.py` 
 
 **Function to invoke:** 
-predict_price
+`predict_price`
 
 Add the following example JSON body into the model description., so it is easy to copy and paste into the model API tester to generate sample predictions.
 
@@ -126,13 +126,23 @@ Test the model using the model API tester and curl.
 
 At the end of this section, you will have a model API ready for generating predictions.
 
+*Note at the end of above steps, a new dataset folder called `prediction_data` will be created to store the captured prediction data in parquet format. Inside the folder the prediction data will be stored by the model version , data and hour*
+
+```
+ubuntu@run-642767ae8cdc3c20deb356f7-5cw6d:/mnt/code$ ls -l /mnt/data/prediction_data/6426faaa8cdc3c20deb356d6/\$\$date\$\$\=2023-03-31Z/\$\$hour\$\$\=16Z/
+total 48
+-rw-r--r-- 1 root root 45994 Mar 31 18:00 predictions_eaf15d43-2f05-41bd-9546-454c3b714a5f.parquet
+ubuntu@run-642767ae8cdc3c20deb356f7-5cw6d:/mnt/code$ 
+```
+
+
 ### Create a Training Set
 In this section, you are going to create a training set that can be compared to later prediction data to monitor data drift. To read more about creating a training set see this, 
 https://docs.dominodatalab.com/en/latest/api_guide/440de9/trainingsets-use-cases/
 
 **Step1:**
 
-Open the 1-Create-Training-Set.ipynb notebook. 
+Open the `1-Create-Training-Set.ipynb` notebook. 
 
 **Step2:**
 
@@ -154,14 +164,14 @@ You can read more on Domino data capture client here, https://docs.dominodatalab
 
 **Step1:**
 
-Open 2-Test-Prediction.ipynb, and run all cells to test the functionality of the prediction function and prediction data capture. This will provide an example of the structure and format of the prediction data recorded by Domino when this model is deployed as a Domino Model API
+Open `2-Test-Prediction.ipynb`, and run all cells to test the functionality of the prediction function and prediction data capture. This will provide an example of the structure and format of the prediction data recorded by Domino when this model is deployed as a Domino Model API.
 
 ### Generate Predictions
 In this section we will use a data-generation program to populate predictions so that we can see how the model monitor is performing.
 
 **Step1:**
 
-Open 3-Generate-Predictions.ipynb. Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
+Open `3-Generate-Predictions.ipynb`. Update MODEL_API_URL and MODEL_API_KEY (the access token) to match your newly published Model API. (you can find this in the overview tab of model API -> click on Python)
 
 **Step2:**
 
@@ -185,20 +195,22 @@ Refresh and view drift and MQ metrics, set thresholds, etc.
 ### Examine Predictions
 Now we’ll open a workspace directly from the published model and examine the predictions.
 From your published model, click ‘Open in Workspace’ to spin up a new workspace
-Open the file 4-Analyze-Predictions.ipynb
+Open the file `4-Analyze-Predictions.ipynb`.
 
 Update the path variable to point to the model version ID (a directory in the predictions Dataset) and execute the notebook to examine the recorded predictions.
+
+In the end, a copy of the prediction data will be saved to a results folder as a CSV file. Sync this file to Domino and download a local copy for generating the ground truth data in the next section. An example is included in the git repo, `sample-data/model-api/preds_from_domino.csv`.
 
 ### Construct Ground Truth Data
 A sample ground truth data set can be constructed based on the above predictions stored in the Domino. 
 
 **Step1:**
 
-First download the predictions as a csv file. An example is included in the git repo, sample-data/model-api/preds_from_domino.csv.
+First, download the predictions as a CSV file in the previous step. An example is included in the git repo, sample-data/model-api/preds_from_domino.csv.
 
 **Step2:**
 
-Update the predictions file to remove all columns except the event ID and then add a new column of price_pred. Update this new price_pred column to reflect the ground truth for the price. An example is included in the git repo, sample-data/model-api/gt_from_domino_preds.csv.
+Update the predictions file to remove all columns except the event ID and then add a new column of price_pred. Update this new price_pred column to reflect the ground truth for the price. An example is included in the git repo, `sample-data/model-api/gt_from_domino_preds.csv`.
 
 **Step3:**
 
@@ -211,7 +223,8 @@ Enter the details for AWS S3 bucket containing the data files.
 
 ### Configure ground truth data
 Add ground truth tracking to the model’s monitoring to determine model quality and accuracy metrics
-From the Monitoring tab, open ‘Configure Monitoring’ > ‘Data’ and follow the instructions to register ground truth data
+From the Monitoring tab, open `Configure Monitoring` > `Data` and follow the instructions to register ground truth data.
+
 Upon being taken to a new page to register ground truth data, upload the config that points to the data
 ```
 {
@@ -235,6 +248,18 @@ Upon being taken to a new page to register ground truth data, upload the config 
     }
 }
 ```
+Where name is the name of the dataset and path is the path inside the S3 bucket.
+
+*Note in subsequent ground truth data uploads, only include the datasetDetails section. An error will be generated if the variables section is included.*
+
+### Review model monitoring
+
+Now go to the model monitor section > Models > <model name> >. Review the Data traffic that shows prediction data traffic and ground trutch data traffic. Switch to the Ingest History tab tio review data ingestions.
+
+Review data drift and model quality data.
+
+You can schedule groud truth and model quality checks.
+
 
 
 
