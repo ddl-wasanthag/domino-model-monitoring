@@ -8,6 +8,7 @@ Online property companies offer valuations of houses using machine learning tech
 https://www.kaggle.com/datasets/shivachandel/kc-house-data
 
 ### Customer Churn Data
+This dataset contains the customer churn prediction data based on dropped calls for a mobile operator.
 
 ## Domino Model Monitoring
 There are two types of model monitoring workflows available in Domino. 
