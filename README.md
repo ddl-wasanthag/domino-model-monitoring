@@ -224,6 +224,8 @@ Navigate to the Model Monitor > Monitoring Data Source > Add Data source
 
 Enter the details for AWS S3 bucket containing the data files.
 
+![alt text](images/dmm-ds.png "S3 Bucket with Files")
+
 ### Configure ground truth data
 Add ground truth tracking to the model’s monitoring to determine model quality and accuracy metrics
 From the Monitoring tab, open `Configure Monitoring` > `Data` and follow the instructions to register ground truth data.
