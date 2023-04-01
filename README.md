@@ -49,6 +49,8 @@ See Set up Model Monitor in the docs, https://docs.dominodatalab.com/en/latest/u
 - Fork this repository to your own repository or use a zip file to upload the content into a Domino project. You can create a Git based project with a forked project or import it as a git repository.
 - Access to AWS S3 bucket to store the training, prediction, and ground truth data. Copy the csv files inside the sample-data in to the S3 bucket.
 
+![alt text](images/s3.png "S3 Bucket with Files")
+
 ## Monitoring Model APIs
 In this section, we will 
 - Create a sample model
