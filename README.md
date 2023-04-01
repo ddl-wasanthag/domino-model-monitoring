@@ -266,18 +266,16 @@ Review data drift and model quality data.
 You can schedule groud truth and model quality checks.
 
 
-
-
 ## Monitoring non Model APIs
 The Domino model monitoring does not require an actual model artifact to perform model monitoring. There are simply three datasets that are needed to set up monitoring.
 
-- Training Data - This is the data used to initially train your model. The schema of this data is the schema that future Prediction Data must match. The Training Data must contain a row_identifier column, at least one feature (aka input) column, and a prediction (aka a target or label) column. Note that only supervised (i.e. Classification or Regression) models trained on tabular data can be monitored in DMM today. 
+- Training Data - This is the data used to initially train your model. The schema of this data is the schema that future Prediction Data must match. The Training Data must contain a row_identifier column, at least one feature (aka input) column, and a prediction (aka a target or label) column. Note that only supervised (i.e. Classification or Regression) models trained on tabular data can be monitored in Model Monitor today. 
 
 - Prediction Data - This is the new data that comes in that your model will make predictions on. It must contain the same feature columns and prediction column as defined in the schema of the Training Data.
 
-- Ground Truth Data - Ground Truth represents the ‘actuals’ that are assigned to a specific row. DMM computes model quality metrics by comparing the ground_truth value to the prediction value.  Ground Truth Data must also contain a row_identifier to match against prediction values.  
+- Ground Truth Data - Ground Truth represents the ‘actuals’ that are assigned to a specific row. Model Monitor computes model quality metrics by comparing the ground_truth value to the prediction value.  Ground Truth Data must also contain a row_identifier to match against prediction values.  
 
-An example of the above situation would be a model that predicts churn_y (customer churn) based on dropperc (percentage of calls dropped),mins (minutes on calls), consecmonths (consecutive months as a customer), income, and age. A few sample rows and the schema for the model in DMM would be as follows -
+An example of the above situation would be a model that predicts churn_y (customer churn) based on dropperc (percentage of calls dropped),mins (minutes on calls), consecmonths (consecutive months as a customer), income, and age. A few sample rows and the schema for the model in Model Monitor would be as follows -
 
 | custid  | dropperc | mins | consecmonths | income | age | churn_Y | predictionProbability | y_gt |
 | ------------- | ------------- |------------- | ------------- |------------- | ------------- |------------- | ------------- | ------------- |
@@ -305,18 +303,17 @@ y_gt - ground_truth (categorical)
 
 In the above use case - the columns [dropperc, mins, consecmonths, income, age] are used to predict churn_Y. y_gt represents the actual outcome of that particular customer - aka did they churn or did they not churn. churn_Y and y_gt are matched on custid to determine the performance of the model predictions. 
 
-### Define data source in DMM
-In DMM click on Data Sources > Add Data Source
+### Define data source in Model Monitor
+First, define a monitoring data source. In Model Monitor click on Data Sources > Add Data Source
 
 Fill out the fields for your new bucket like shown below
 
 ![alt text](images/dmm-ds.png "S3 Bucket with Files")
  
+For credentials use your access key and secret key associated with an IAM role with read and write access to the bucket.
 
-You can give the data source a unique name in DMM, but I typically just use the same name as the s3 bucket name to make things a bit simpler. For credentials use your access key and secret key associated with an IAM role with read and write access to the bucket.
-
-### Register Model in DMM
-Navigate back to the Models page in DMM and click Register Model > Upload Model Config File
+### Register Model in Model Monitor
+Navigate back to the Models page in Model Monitor and click Register Model > Upload Model Config File
 
 Paste in the config file below and adjust column names, column types, feature importances etc. as necessary for your use case. Again make sure that your model contains a row_identifier, at least one feature, and a prediction column. Note that column type prediction_probability is not required but if included will generate additional model quality metrics for a classification model (i.e. GINI, Log Loss, Auc ROC).
 
@@ -392,19 +389,19 @@ Paste in the config file below and adjust column names, column types, feature im
 }
 ``` 
 
-After this, you should see your model successfully registered in DMM and you can start adding prediction and ground truth data sets. 
+After this, you should see your model successfully registered in Model Monitor and you can start adding prediction and ground truth data sets. 
 
  
+
+#### Prediction Data Registration
 
 If you choose to do manual uploads of your prediction data and ground truth data use the following json’s to do so. 
 
  
 
-Note - if you are doing manual upload of prediction and ground truth data at this time you will need to upload those data sets to your s3 bucket as well. Jot down the names of your prediction and ground truth data sets as you will reference those in the json files below.
+*Note - if you are doing manual upload of prediction and ground truth data at this time you will need to upload those data sets to your s3 bucket as well. Jot down the names of your prediction and ground truth data sets as you will reference those in the json files below.*
 
  
-
-### Prediction Data Registration
 
 ```
 {
@@ -422,7 +419,7 @@ Note - if you are doing manual upload of prediction and ground truth data at thi
 }
  ```
 
-### Ground Truth Data (Initial Registration)
+#### Ground Truth Data (Initial Registration)
 
 ```
 {
@@ -448,8 +445,9 @@ Note - if you are doing manual upload of prediction and ground truth data at thi
 }
 ``` 
 
-### Ground Truth Registration (All instances after initial upload)
+#### Ground Truth Registration (All instances after initial upload)
 
+*Clarification on above two configuration files - the initial Ground Truth Registration will fail unless lines 2-9 in the Ground Truth Data (Initial Registration) config file are present. And all future ground truth registrations will fail if those lines are present. Please keep this in mind when you are registering ground truth to avoid any issues in this process.*
  
 ```
 
@@ -468,5 +466,5 @@ Note - if you are doing manual upload of prediction and ground truth data at thi
 }
  ```
 
-Clarification on above two configuration files - the initial Ground Truth Registration will fail unless lines 2-9 in the Ground Truth Data (Initial Registration) config file are present. And all future ground truth registrations will fail if those lines are present. Please keep this in mind when you are registering ground truth to avoid any issues in this process.
+
 
