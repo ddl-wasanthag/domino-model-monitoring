@@ -304,3 +304,169 @@ y_gt - ground_truth (categorical)
 
 
 In the above use case - the columns [dropperc, mins, consecmonths, income, age] are used to predict churn_Y. y_gt represents the actual outcome of that particular customer - aka did they churn or did they not churn. churn_Y and y_gt are matched on custid to determine the performance of the model predictions. 
+
+### Define data source in DMM
+In DMM click on Data Sources > Add Data Source
+
+Fill out the fields for your new bucket like shown below
+
+![alt text](images/dmm-ds.png "S3 Bucket with Files")
+ 
+
+You can give the data source a unique name in DMM, but I typically just use the same name as the s3 bucket name to make things a bit simpler. For credentials use your access key and secret key associated with an IAM role with read and write access to the bucket.
+
+### Register Model in DMM
+Navigate back to the Models page in DMM and click Register Model > Upload Model Config File
+
+Paste in the config file below and adjust column names, column types, feature importances etc. as necessary for your use case. Again make sure that your model contains a row_identifier, at least one feature, and a prediction column. Note that column type prediction_probability is not required but if included will generate additional model quality metrics for a classification model (i.e. GINI, Log Loss, Auc ROC).
+
+
+```
+
+{
+    "variables": [
+        {
+            "name": "custid",
+            "valueType": "string",
+            "variableType": "row_identifier"
+        },
+        {
+            "name": "dropperc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.7
+        },
+        {
+            "name": "mins",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.9
+        },
+        {
+            "name": "consecmonths",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.1
+        },
+        {
+            "name": "income",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.3
+        },
+        {
+            "name": "age",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.5
+        },
+        {
+            "name": "churn_Y",
+            "valueType": "categorical",
+            "variableType": "prediction"
+        },
+        {
+            "name": "predictionProbability",
+            "valueType": "numerical",
+            "variableType": "prediction_probability",
+            "forPredictionOutput": "churn_Y"
+        }
+    ],
+    "datasetDetails": {
+        "name": "ChurnTrainingDataPP.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ChurnTrainingDataPP.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "churn-dmm-46",
+        "datasourceType": "s3"
+    },
+    "modelMetadata": {
+        "name": "customer-churn",
+        "modelType": "classification",
+        "version": "1.0",
+        "description": "Classification model to predict customer churn",
+        "author": "Elliott Botwick"
+    }
+}
+``` 
+
+After this, you should see your model successfully registered in DMM and you can start adding prediction and ground truth data sets. 
+
+ 
+
+If you choose to do manual uploads of your prediction data and ground truth data use the following json’s to do so. 
+
+ 
+
+Note - if you are doing manual upload of prediction and ground truth data at this time you will need to upload those data sets to your s3 bucket as well. Jot down the names of your prediction and ground truth data sets as you will reference those in the json files below.
+
+ 
+
+### Prediction Data Registration
+
+```
+{
+
+    "datasetDetails": {
+        "name": "inputs_and_preds_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "inputs_and_preds_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "churn-dmm-46",
+        "datasourceType": "s3"
+    }
+}
+ ```
+
+### Ground Truth Data (Initial Registration)
+
+```
+{
+    "variables": [
+        {
+            "valueType": "categorical",
+            "variableType": "ground_truth",
+            "name": "y_gt",
+            "forPredictionOutput": "churn_Y"
+        }
+    ],
+
+    "datasetDetails": {
+        "name": "ground_truth_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ground_truth_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "churn-dmm-46",
+        "datasourceType": "s3"
+    }
+}
+``` 
+
+### Ground Truth Registration (All instances after initial upload)
+
+ 
+```
+
+{
+
+    "datasetDetails": {
+        "name": "ground_truth_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ground_truth_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "churn-dmm-46",
+        "datasourceType": "s3"
+    }
+}
+ ```
+
+Clarification on above two configuration files - the initial Ground Truth Registration will fail unless lines 2-9 in the Ground Truth Data (Initial Registration) config file are present. And all future ground truth registrations will fail if those lines are present. Please keep this in mind when you are registering ground truth to avoid any issues in this process.
+
