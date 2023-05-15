@@ -465,6 +465,154 @@ If you choose to do manual uploads of your prediction data and ground truth data
     }
 }
  ```
+### Model Monitoring API
+  
+The following shows the examples of using the DMM API to configure model monitoring for external Models. 
+  
+  #### Register a new model in DMM
+  
+  ```
+  curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/model' \
+--header 'X-DMM-API-KEY: <redacted>' \
+--header 'Content-Type: application/json' \
+--data-raw '
+{
+    "variables": [
+        {
+            "name": "custid",
+            "valueType": "string",
+            "variableType": "row_identifier"
+        },
+        {
+            "name": "dropperc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.7
+        },
+        {
+            "name": "mins",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.9
+        },
+        {
+            "name": "consecmonths",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.1
+        },
+        {
+            "name": "income",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.3
+        },
+        {
+            "name": "age",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.5
+        },
+        {
+            "name": "churn_Y",
+            "valueType": "categorical",
+            "variableType": "prediction"
+        },
+        {
+            "name": "predictionProbability",
+            "valueType": "numerical",
+            "variableType": "prediction_probability",
+            "forPredictionOutput": "churn_Y"
+        }
+    ],
+    "datasetDetails": {
+        "name": "ChurnTrainingDataPP.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ChurnTrainingDataPP.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "wgamage",
+        "datasourceType": "s3"
+    },
+    "modelMetadata": {
+        "name": "customer-churn",
+        "modelType": "classification",
+        "version": "1.0",
+        "description": "Classification model to predict customer churn",
+        "author": "Elliott Botwick"
+    }
+}'
+  ```
+  
+  #### Add prediction data
+  
+  ```
+  curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/model/6462a4aea1cfc5fecd69a2d5/register-dataset/prediction' \
+--header 'X-DMM-API-KEY: <Redacted>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
 
+    "datasetDetails": {
+        "name": "inputs_and_preds_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "inputs_and_preds_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "wgamage",
+        "datasourceType": "s3"
+    }
+}'
+  ```
+  
+  #### Add Gtound truth data
+  
+  ```
+  curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/model/6462a4aea1cfc5fecd69a2d5/register-dataset/ground_truth?=&=' \
+--header 'X-DMM-API-KEY: <Redacted>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "variables": [
+        {
+            "valueType": "categorical",
+            "variableType": "ground_truth",
+            "name": "y_gt",
+            "forPredictionOutput": "churn_Y"
+        }
+    ],
+
+    "datasetDetails": {
+        "name": "ground_truth_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ground_truth_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "wgamage",
+        "datasourceType": "s3"
+    }
+}'
+  ```
+  
+  Please note that all subsequent ground truth data ingestions should have the following body format.
+  
+  ```
+  {
+
+    "datasetDetails": {
+        "name": "ground_truth_2021-09-16.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "ground_truth_2021-09-16.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "churn-dmm-46",
+        "datasourceType": "s3"
+    }
+}
+  
+  ```
+  
 
 
