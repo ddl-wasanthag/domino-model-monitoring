@@ -469,6 +469,29 @@ If you choose to do manual uploads of your prediction data and ground truth data
   
 The following shows the examples of using the DMM API to configure model monitoring for external Models. 
   
+  #### Create DMM data source
+  
+  This data source contains all the training, prediction and ground trutch data for external model.
+  
+  ```
+  curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/datasource' \
+--header 'X-DMM-API-KEY: <Redacted>' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: dominoSession=eda22075-837a-4e2f-b6c4-07826fcfd9a1' \
+--data-raw '{
+    "name":"wgamage",
+    "type":"snowflake",
+    "config":{
+        "url":"domino-snowflake.snowflakecomputing.com",
+        "user":"sf_user","password":"sf_pass",
+        "database":"database1",
+        "schema":"PUBLIC",
+        "warehouse":"warehouse1","role":"SYSADMIN"
+        }
+    }
+'
+  ```
+  
   #### Register a new model in DMM
   
   ```
