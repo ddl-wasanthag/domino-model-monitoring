@@ -469,9 +469,9 @@ If you choose to do manual uploads of your prediction data and ground truth data
   
 The following shows the examples of using the DMM API to configure model monitoring for external Models. 
   
-  #### Create DMM data source
+  #### Create a DMM Data source
   
-  This data source contains all the training, prediction and ground trutch data for external model.
+  This data source contains all the training, prediction and ground truth data for external model.
   
   ```
   curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/datasource' \
@@ -589,7 +589,7 @@ The following shows the examples of using the DMM API to configure model monitor
 }'
   ```
   
-  #### Add Gtound truth data
+  #### Add Ground truth data
   
   ```
   curl --location --request PUT 'https://prod-field.cs.domino.tech/model-monitor/v2/api/model/6462a4aea1cfc5fecd69a2d5/register-dataset/ground_truth?=&=' \
